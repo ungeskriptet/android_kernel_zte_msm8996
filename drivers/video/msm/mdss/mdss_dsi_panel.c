@@ -267,6 +267,7 @@ static void mdss_dsi_panel_cmds_send(struct mdss_dsi_ctrl_pdata *ctrl,
 {
 	struct dcs_cmd_req cmdreq;
 	struct mdss_panel_info *pinfo;
+	int i, j;
 
 	pinfo = &(ctrl->panel_data.panel_info);
 	if (pinfo->dcs_cmd_by_left) {
@@ -287,6 +288,14 @@ static void mdss_dsi_panel_cmds_send(struct mdss_dsi_ctrl_pdata *ctrl,
 
 	cmdreq.rlen = 0;
 	cmdreq.cb = NULL;
+
+	/* Show panel commands that are being sent */
+	for (i = 0; i < pcmds->cmd_cnt; i++) {
+		printk("%s: [CMD]: ", __func__);
+		for (j = 0; j < pcmds->cmds[i].dchdr.dlen; j++)
+			printk("%02x ", pcmds->cmds[i].payload[j]);
+		printk("\n");
+	}
 
 	mdss_dsi_cmdlist_put(ctrl, &cmdreq);
 }
@@ -329,7 +338,7 @@ static void mdss_dsi_panel_bklt_dcs(struct mdss_dsi_ctrl_pdata *ctrl, int level)
 	else
 		bl_level = (15*level*level + 6059*level+29580)/10000;
 
-	pr_err("LCD %s: flag=%d level=%d -> new_level=%d\n", __func__, power_on_flag, level, bl_level);
+	//pr_err("LCD %s: flag=%d level=%d -> new_level=%d\n", __func__, power_on_flag, level, bl_level);
 
 	led_pwm1[1] = (unsigned char)bl_level;
 
